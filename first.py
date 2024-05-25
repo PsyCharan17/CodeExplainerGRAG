@@ -15,13 +15,18 @@ os.environ["OPENAI_API_KEY"] = os.environ.get("OPENAI_API_KEY")
 from graph_retrieval_system import GraphRAG
 grag = GraphRAG()
 
+processed_file_path = 'input.txt' 
 def making_graph(file):
   grag.create_graph_from_file(file)
 
+def data_processing(repo_link,input_file_path = processed_file_path):
+   merging_files(repo_link)
+   making_graph(input_file_path)
 
 def qa_from_graph(query):
   response = grag.queryLLM(query)
   print('answer:',response)
+  return response
 
 repo_link = 'https://github.com/PsyCharan17/SampleRepo'
 # repo_link = 'https://github.com/PsyCharan17/BlogifyAI'
@@ -32,7 +37,7 @@ def merging_files(repo_link):
     # Clone the repository
     target_directory = f'tmp/{project_name}'
     if not os.path.exists(target_directory):
-      repo = git.Repo.clone_from(repo_link, target_directory, branch='master')
+      repo = git.Repo.clone_from(repo_link, target_directory, branch='main')
     else:
       print(f"The directory '{target_directory}' already exists. Skipping cloning.")
     
@@ -50,12 +55,13 @@ def merging_files(repo_link):
     print('All files merged into input.txt')
 
 
-input_file_path = 'input.txt' 
 
-# merging_files(repo_link)
-# making_graph(input_file_path)
 
-# query= "What is happening in the backend folder"
-# print("Heres the query : ", query)
-# qa_from_graph(query)
+
+if __name__ == '__main__':
+  data_processing(repo_link)
+  query= "What is happening in the dataprocessor.py file"
+  print("Heres the query : ", query)
+  qa_from_graph(query)
+
 
